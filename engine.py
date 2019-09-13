@@ -82,6 +82,10 @@ class PlayersGroup(object):
     def switch(self):
         self.currentPlayer = next(self.playersIterator)
 
+    def reset(self):
+        self.playersIterator = cycle(self.players)
+
+
 
 class Board(QObject):
     ''' The board keeps track of available positions and moves
@@ -104,6 +108,9 @@ class Board(QObject):
         super(Board, self).__init__(*args, **kwargs)
 
         self.positions = range(9)
+        self.state = [''] * len(self.positions)
+
+    def reset(self):
         self.state = [''] * len(self.positions)
 
     def hasAvailablePositions(self):
@@ -204,3 +211,7 @@ class Engine(QObject):
         # pass input to current player only if they are able to accept it
         if self.awaitingMove and getattr(self.players.current(), 'acceptInput', None):
             self.players.current().acceptInput(position)
+
+    def resetGame(self):
+        self.board.reset()
+        self.players.reset()

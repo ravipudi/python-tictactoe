@@ -11,7 +11,7 @@ except ImportError:
     from PyQt5.QtGui import QFont
     from PyQt5.QtWidgets import (
         QApplication, QButtonGroup, QGridLayout, QMainWindow, QMessageBox,
-        QPushButton, QWidget,
+        QPushButton, QWidget, QMessageBox,
     )
 
 from engine import Board, Engine, DumbMachinePlayer, HumanPlayer
@@ -84,6 +84,16 @@ class GameWindow(QMainWindow):
         else:
             self.notify(self.MESSAGE_DRAW)
 
+        buttonReply = QMessageBox.question(self, '',
+                        "Wanna play again?", QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
+        if buttonReply == QMessageBox.Yes:
+            # reset the game board
+            self.boardWidget.resetUi()
+            self.engine.resetGame()
+            self.startGame()
+        else:
+            QApplication.instance().quit()
+
     def notify(self, message):
         self.statusBar().showMessage(message)
 
@@ -133,6 +143,10 @@ class BoardWidget(QWidget):
     def handlePlayerMoved(self, position, player):
         self.buttonGroup.buttons()[position].markPlayer(player)
 
+    def resetUi(self):
+        for button in self.buttonGroup.buttons():
+            button.clearText()
+
 
 class GameButton(QPushButton):
     def __init__(self, position, *args, **kwargs):
@@ -161,12 +175,16 @@ class GameButton(QPushButton):
     def markPlayer(self, player):
         self.setText(str(player))
 
+    def clearText(self):
+        self.setText('')
+
 
 def main(argv):
     app = QApplication(argv)
     the_game = GameWindow()
     the_game.show()
-    app.exec_()
+    exit(app.exec_())
+
 
 
 if __name__ == '__main__':
