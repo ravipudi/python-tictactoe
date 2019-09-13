@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from builtins import next
 from itertools import cycle
 from operator import itemgetter
 import random
 
 try:
-    from PyQt4.QtCore import pyqtSignal, QObject, QTimer
-except ImportError:
     from PyQt5.QtCore import pyqtSignal, QObject, QTimer
+except ImportError:
+    from PyQt4.QtCore import pyqtSignal, QObject, QTimer
 
 
 class Player(object):
@@ -107,7 +106,7 @@ class Board(QObject):
     def __init__(self, *args, **kwargs):
         super(Board, self).__init__(*args, **kwargs)
 
-        self.positions = range(9)
+        self.positions = list(range(9))
         self.state = [''] * len(self.positions)
 
     def reset(self):
